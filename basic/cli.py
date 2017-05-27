@@ -97,6 +97,8 @@ flags.DEFINE_bool("q2c_att", True, "question-to-context attention? [True]")
 flags.DEFINE_bool("c2q_att", True, "context-to-question attention? [True]")
 flags.DEFINE_bool("dynamic_att", False, "Dynamic attention [False]")
 
+# Negative prediction
+flags.DEFINE_bool("pred_negative", True, "predict whether question is answerable [True]")
 
 def main(_):
     config = flags.FLAGS
