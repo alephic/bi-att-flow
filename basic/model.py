@@ -179,16 +179,11 @@ class Model(object):
                                  is_train=self.is_train, func=config.answer_func, scope='logits2')
 
             flat_logits = tf.reshape(logits, [-1, M * JX])
-            flat_logits2 = tf.reshape(logits2, [-1, M * JX])
-            if config.pred_negative:
-                neg_score = tf.get_variable('neg_score', shape=[], dtype='float')
-                neg_score = tf.reshape(tf.tile(tf.expand_dims(neg_score, 0), [N]), [N, 1])
-                flat_logits = tf.concat(1, [flat_logits, neg_score])
-                flat_logits2 = tf.concat(1, [flat_logits2, neg_score])
             flat_yp = tf.nn.softmax(flat_logits)  # [-1, M*JX]
-            yp = tf.reshape(flat_yp[:, :-1] if config.pred_negative else flat_yp, [-1, M, JX])
+            yp = tf.reshape(flat_yp, [-1, M, JX])
+            flat_logits2 = tf.reshape(logits2, [-1, M * JX])
             flat_yp2 = tf.nn.softmax(flat_logits2)
-            yp2 = tf.reshape(flat_yp2[:, :-1] if config.pred_negative else flat_yp2, [-1, M, JX])
+            yp2 = tf.reshape(flat_yp2, [-1, M, JX])
 
             self.tensor_dict['g1'] = g1
             self.tensor_dict['g2'] = g2
@@ -205,11 +200,11 @@ class Model(object):
         JQ = tf.shape(self.q)[1]
         loss_mask = tf.reduce_max(tf.cast(self.q_mask, 'float'), 1)
         losses = tf.nn.softmax_cross_entropy_with_logits(
-            self.logits, tf.cast(tf.reshape(self.y, [-1, M * JX + (1 if config.pred_negative else 0)]), 'float'))
+            self.logits, tf.cast(tf.reshape(self.y, [-1, M * JX]), 'float'))
         ce_loss = tf.reduce_mean(loss_mask * losses)
         tf.add_to_collection('losses', ce_loss)
         ce_loss2 = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(
-            self.logits2, tf.cast(tf.reshape(self.y2, [-1, M * JX + (1 if config.pred_negative else 0)]), 'float')))
+            self.logits2, tf.cast(tf.reshape(self.y2, [-1, M * JX]), 'float')))
         tf.add_to_collection("losses", ce_loss2)
 
         self.loss = tf.add_n(tf.get_collection('losses', scope=self.scope), name='loss')
