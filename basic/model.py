@@ -178,8 +178,8 @@ class Model(object):
             if config.pred_negative:
                 neg_score = tf.get_variable('neg_score', shape=[], dtype='float')
                 neg_score = tf.reshape(tf.tile(tf.expand_dims(neg_score, 0), [N]), [N, 1])
-                logits = tf.concat(1, [logits, neg_score])
-                logits2 = tf.concat(1, [logits2, neg_score])
+                logits = tf.concat(1, [flat_logits, neg_score])
+                logits2 = tf.concat(1, [flat_logits2, neg_score])
             yp = tf.nn.softmax(flat_logits)  # [-1, JX]
             yp2 = tf.nn.softmax(flat_logits2)
 
