@@ -177,13 +177,22 @@ class Model(object):
             logits2 = get_logits([g2, p0], d, True, wd=config.wd, input_keep_prob=config.input_keep_prob,
                                  mask=self.x_mask,
                                  is_train=self.is_train, func=config.answer_func, scope='logits2')
-
-            flat_logits = tf.reshape(logits, [-1, M * JX])
+            
+            if config.pred_negative:
+                neg = tf.get_variable("neg", [], dtype='float')
+                neg = tf.expand_dims(neg, 0)
+                neg = tf.pad(neg, tf.Tensor([[0, JX - 1]], dtype='int32'))
+                neg = tf.tile(tf.expand_dims(tf.expand_dims(neg, 0), 0), [N, 1, 1])
+                logits = tf.concat(2, [logits, neg])
+                logits2 = tf.concat(2, [logits2, neg])
+            
+            M2 = M + (1 if config.pred_negative else 0)
+            flat_logits = tf.reshape(logits, [-1, M2 * JX])
             flat_yp = tf.nn.softmax(flat_logits)  # [-1, M*JX]
-            yp = tf.reshape(flat_yp, [-1, M, JX])
-            flat_logits2 = tf.reshape(logits2, [-1, M * JX])
+            yp = tf.reshape(flat_yp, [-1, M2, JX])
+            flat_logits2 = tf.reshape(logits2, [-1, M2 * JX])
             flat_yp2 = tf.nn.softmax(flat_logits2)
-            yp2 = tf.reshape(flat_yp2, [-1, M, JX])
+            yp2 = tf.reshape(flat_yp2, [-1, M2, JX])
 
             self.tensor_dict['g1'] = g1
             self.tensor_dict['g2'] = g2
