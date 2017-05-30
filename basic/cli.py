@@ -99,6 +99,8 @@ flags.DEFINE_bool("dynamic_att", False, "Dynamic attention [False]")
 
 # Negative prediction
 flags.DEFINE_bool("pred_negative", True, "predict whether question is answerable [True]")
+flags.DEFINE_integer("neg_aug", 1, "number of negative examples to generate for each positive example [1]")
+flags.DEFINE_string("neg_lex_sim", "none", "sample negative examples sorted by lexical similarity? none | high | low [none]")
 
 def main(_):
     config = flags.FLAGS
