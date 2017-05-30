@@ -205,7 +205,7 @@ class Model(object):
     def _build_loss(self):
         config = self.config
         JX = tf.shape(self.x)[2]
-        M = tf.shape(self.x)[1]
+        M = tf.shape(self.x)[1] + (1 if config.pred_negative else 0)
         JQ = tf.shape(self.q)[1]
         loss_mask = tf.reduce_max(tf.cast(self.q_mask, 'float'), 1)
         losses = tf.nn.softmax_cross_entropy_with_logits(
@@ -304,8 +304,9 @@ class Model(object):
         CX = batch.data['cx']
 
         if supervised:
-            y = np.zeros([N, M, JX], dtype='bool')
-            y2 = np.zeros([N, M, JX], dtype='bool')
+            M2 = M + (1 if config.pred_negative else 0)
+            y = np.zeros([N, M2, JX], dtype='bool')
+            y2 = np.zeros([N, M2, JX], dtype='bool')
             feed_dict[self.y] = y
             feed_dict[self.y2] = y2
 
