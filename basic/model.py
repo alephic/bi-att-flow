@@ -180,7 +180,6 @@ class Model(object):
             
             if config.pred_negative:
                 neg = tf.get_variable("neg", [], dtype='float')
-                neg = tf.expand_dims(neg, 0)
                 neg = tf.concat(0, (tf.expand_dims(neg, 0), tf.zeros([JX - 1], dtype='float')))
                 neg = tf.tile(tf.expand_dims(tf.expand_dims(neg, 0), 0), [N, 1, 1])
                 logits = tf.concat(1, [logits, neg])
