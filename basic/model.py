@@ -183,8 +183,8 @@ class Model(object):
                 neg = tf.expand_dims(neg, 0)
                 neg = tf.pad(neg, tf.Tensor([[0, JX - 1]], dtype='int32'))
                 neg = tf.tile(tf.expand_dims(tf.expand_dims(neg, 0), 0), [N, 1, 1])
-                logits = tf.concat(2, [logits, neg])
-                logits2 = tf.concat(2, [logits2, neg])
+                logits = tf.concat(1, [logits, neg])
+                logits2 = tf.concat(1, [logits2, neg])
             
             M2 = M + (1 if config.pred_negative else 0)
             flat_logits = tf.reshape(logits, [-1, M2 * JX])
