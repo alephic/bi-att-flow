@@ -156,7 +156,7 @@ def load_metadata(config, data_type):
 
 
 def read_data(config, data_type, ref, data_filter=None):
-    data_path = os.path.join(config.data_dir, "data_{}.json".format(data_type))
+    data_path = os.path.join(config.data_dir, ("data_neg_{}.json" if config.pred_negative else "data_{}.json").format(data_type))
     shared_path = os.path.join(config.data_dir, "shared_{}.json".format(data_type))
     with open(data_path, 'r') as fh:
         data = json.load(fh)
