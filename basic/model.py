@@ -181,7 +181,7 @@ class Model(object):
             if config.pred_negative:
                 neg = tf.get_variable("neg", [], dtype='float')
                 neg = tf.expand_dims(neg, 0)
-                neg = tf.pad(neg, tf.Tensor([[0, JX - 1]], dtype='int32'))
+                neg = tf.pad(neg, tf.constant([[0, JX - 1]], dtype='int32'))
                 neg = tf.tile(tf.expand_dims(tf.expand_dims(neg, 0), 0), [N, 1, 1])
                 logits = tf.concat(1, [logits, neg])
                 logits2 = tf.concat(1, [logits2, neg])
