@@ -18,7 +18,7 @@ def run():
 def add_neg_examples(data, shared):
   keys = ['*p', '*x', '*cx', 'q', 'cq', 'y', 'cy', 'answerss', 'ids', 'idxs']
   new_examples = {k:[] for k in keys}
-  for idx in data['idxs']:
+  for idx in range(len(data['idxs'])):
     rp, rx, rcx, q, cq, y, cy, answerss, ids, idxs = [data[k][idx] for k in keys]
     sents = shared['x'][rx[0]][rx[1]]
     new_y = [[[len(sents), 0], [len(sents), 1]]]
