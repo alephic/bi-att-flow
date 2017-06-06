@@ -272,7 +272,7 @@ class F1Evaluator(LabeledEvaluator):
         if self.config.pred_negative:
             l = [get_best_span(ypi[:-1], yp2i[:-1]) for i, (ypi, yp2i) in enumerate(zip(yp, yp2)) if y[i][0][0][0] < len(ypi)-1]
             if len(l) == 0:
-                spans, scores = [], []
+                return 0
             else:
                 spans, scores = zip(*l)
         else:
