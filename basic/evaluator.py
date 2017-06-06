@@ -270,11 +270,15 @@ class F1Evaluator(LabeledEvaluator):
 
         yp, yp2 = yp[:data_set.num_examples], yp2[:data_set.num_examples]
         if self.config.pred_negative:
-            l = [get_best_span(ypi[:-1], yp2i[:-1]) for i, (ypi, yp2i) in enumerate(zip(yp, yp2)) if y[i][0][0][0] < len(ypi)-1]
-            if len(l) == 0:
-                return 0
-            else:
-                spans, scores = zip(*l)
+            l = []
+            for i, (ypi, yp2i) in enumerate(zip(yp, yp2)):
+                span, score = get_best_span(ypi[:-1], yp2i[:-1])
+                no_answer_score = ypi[-1][0] * yp2i[-1][0]
+                if no_answer_score > score:
+                    span = ((len(ypi)-1, 0), (len(ypi)-1, 1))
+                    score = no_answer_score
+                l.append((span, score))
+            spans, scores = zip(*l)
         else:
             spans, scores = zip(*[get_best_span(ypi, yp2i) for ypi, yp2i in zip(yp, yp2)])
 
