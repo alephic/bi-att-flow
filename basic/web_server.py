@@ -327,6 +327,7 @@ def main(_):
       MODEL = model
 
       httpd = http.server.HTTPServer(('', 8000), QAHttpRequestHandler)
+      print("Serving on port", httpd.server_port)
       httpd.serve_forever()
 
 if __name__ == "__main__":
