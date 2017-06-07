@@ -1,6 +1,4 @@
 
-from squad.utils import get_best_span
-
 from basic.graph_handler import GraphHandler
 from basic.model import get_multi_gpu_models
 from basic.main import set_dirs
@@ -83,20 +81,40 @@ def get_feed_dict(ctx, ques):
           cq[0, j, k] = _get_char(cqijk)
 
   return feed_dict
-  
+
+def get_best_span(yp, yp2):
+  argmax_end_after = []
+  max_end = 0
+  argmax_end = len(yp) - 1
+  for i in range(len(yp)):
+    j = len(yp) - i - 1
+    curr = yp2[j]
+    if curr > max_end:
+      max_end = curr
+      argmax_end = j
+    argmax_end_after.append(argmax_end)
+  max_span = 0
+  argmax_span = (0, 0)
+  for i in range(len(yp)):
+    j = len(yp) - i - 1
+    curr = yp[i] * yp2[argmax_end_after[j]]
+    if curr > max_span:
+      max_span = curr
+      argmax_span = (i, argmax_end_after[j])
+  return argmax_span
 
 class QAHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
   def generate_response_body(self, c, q):
     c = word_tokenize(c)
     q = word_tokenize(q)
     yp, yp2 = SESS.run([MODEL.yp, MODEL.yp2], feed_dict=get_feed_dict(c, q))
-    min_start = min(float(yp[0][1][0]), min([float(x) for x in yp[0][0]]))
-    max_start = max(float(yp[0][1][0]), max([float(x) for x in yp[0][0]]))
+    min_start = min(float(yp[0][1][0]), min([float(x) for x in yp[0][0][:len(c)]]))
+    max_start = max(float(yp[0][1][0]), max([float(x) for x in yp[0][0][:len(c)]]))
     start_range = max_start - min_start
-    min_end = min(float(yp2[0][1][0]), min([float(x) for x in yp2[0][0]]))
-    max_end = max(float(yp2[0][1][0]), max([float(x) for x in yp2[0][0]]))
+    min_end = min(float(yp2[0][1][0]), min([float(x) for x in yp2[0][0][:len(c)]]))
+    max_end = max(float(yp2[0][1][0]), max([float(x) for x in yp2[0][0][:len(c)]]))
     end_range = max_end - min_end
-    (start, end), _ = get_best_span(yp[0], yp2[0])
+    (start, end), _ = get_best_span([float(x) for x in yp[0][0][:len(c)]], [float(x) for x in yp2[0][0][:len(c)]])
     if start[0] == 1:
       yield "<table><tr>"
       for i, word in enumerate(c):
