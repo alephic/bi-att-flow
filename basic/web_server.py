@@ -46,7 +46,7 @@ def get_feed_dict(ctx, ques):
   feed_dict[MODEL.q_mask] = q_mask
   feed_dict[MODEL.is_train] = False
   if CONFIG.use_glove_for_unk:
-      feed_dict[self.new_emb_mat] = SHARED['new_emb_mat']
+      feed_dict[MODEL.new_emb_mat] = SHARED['new_emb_mat']
 
   def _get_word(word):
     d = SHARED['word2idx']
