@@ -18,6 +18,7 @@ import os
 import io
 import shutil
 from tqdm import tqdm
+from pprint import pprint
 
 SESS = None
 MODEL = None
