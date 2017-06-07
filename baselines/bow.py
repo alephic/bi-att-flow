@@ -1,6 +1,4 @@
 
-from nltk import word_tokenize
-
 def run():
     pass
 
