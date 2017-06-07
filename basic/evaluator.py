@@ -273,7 +273,7 @@ class F1Evaluator(LabeledEvaluator):
             l = []
             for i, (ypi, yp2i) in enumerate(zip(yp, yp2)):
                 span, score = get_best_span(ypi[:-1], yp2i[:-1])
-                no_answer_score = ypi[-1][0] * yp2i[-1][0]
+                no_answer_score = float(ypi[-1][0] * yp2i[-1][0])
                 if no_answer_score > score:
                     span = ((len(ypi)-1, 0), (len(ypi)-1, 1))
                     score = no_answer_score
