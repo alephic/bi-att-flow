@@ -27,8 +27,8 @@ CONFIG = None
 
 def get_feed_dict(ctx, ques):
   N, M, JX, JQ, VW, VC, d, W = \
-      1, 1, len(ctx), \
-      len(ques), CONFIG.word_vocab_size, CONFIG.char_vocab_size, CONFIG.hidden_size, max(map(len, ctx+ques))
+      CONFIG.batch_size, CONFIG.max_num_sents, CONFIG.max_sent_size, \
+      CONFIG.max_ques_size, CONFIG.word_vocab_size, CONFIG.char_vocab_size, CONFIG.hidden_size, CONFIG.max_word_size
   feed_dict = {}
 
   x = np.zeros([N, M, JX], dtype='int32')
