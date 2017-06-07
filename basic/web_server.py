@@ -150,6 +150,7 @@ class QAHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
         b.write(item.encode())
       b.seek(0)
       self.send_header("Content-Length", str(b.getbuffer().nbytes))
+      self.send_header("Access-Control-Allow-Origin", '*')
       self.end_headers()
       shutil.copyfileobj(b, self.wfile)
     else:
