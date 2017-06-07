@@ -101,7 +101,7 @@ def get_best_span(yp, yp2):
     if curr > max_span:
       max_span = curr
       argmax_span = (i, argmax_end_after[j])
-  return argmax_span
+  return argmax_span, max_span
 
 class QAHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
   def generate_response_body(self, c, q):
@@ -114,8 +114,9 @@ class QAHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
     min_end = min(float(yp2[0][1][0]), min([float(x) for x in yp2[0][0][:len(c)]]))
     max_end = max(float(yp2[0][1][0]), max([float(x) for x in yp2[0][0][:len(c)]]))
     end_range = max_end - min_end
-    (start, end), _ = get_best_span([float(x) for x in yp[0][0][:len(c)]], [float(x) for x in yp2[0][0][:len(c)]])
-    if start[0] == 1:
+    (start, end), score = get_best_span([float(x) for x in yp[0][0][:len(c)]], [float(x) for x in yp2[0][0][:len(c)]])
+    no_ans_score = yp[0][1][0] * yp2[0][1][0]
+    if score < no_ans_score:
       yield "<table><tr>"
       for i, word in enumerate(c):
         yield "<td class=\"outAnswer\">%s</td>" % word
@@ -136,8 +137,6 @@ class QAHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
       yield "<td style=\"background-color: rgb(197,71,255)\">%.2f</td>" % score_lerp
       yield "</tr></table>"
     else:
-      start = start[1]
-      end = end[1]
       yield "<table><tr>"
       for i, word in enumerate(c):
         if i >= start and i <= end:
