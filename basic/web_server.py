@@ -311,6 +311,9 @@ def main(_):
         new_emb_mat = np.array([idx2vec_dict[idx] for idx in range(len(idx2vec_dict))], dtype='float32')
         SHARED['new_emb_mat'] = new_emb_mat
         config.new_emb_mat = new_emb_mat
+      config.char_vocab_size = len(SHARED['char2idx'])
+      config.word_emb_size = len(next(iter(SHARED['word2vec'].values())))
+      config.word_vocab_size = len(SHARED['word2idx'])
 
       pprint(config.__flags, indent=2)
       models = get_multi_gpu_models(config)
