@@ -120,21 +120,21 @@ class QAHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
       yield "<table><tr>"
       for i, word in enumerate(c):
         yield "<td class=\"outAnswer\">%s</td>" % word
-      yield "<td class=\"inAnswer\">No Answer</td>"
       yield "</tr><tr>"
       for i in range(len(c)):
         score_lerp = (float(yp[0][0][i]) - min_start) / start_range
         non_green = int((1 - score_lerp)*255)
         yield "<td style=\"background-color: rgb(%d,255,%d)\">%.2f</td>" % (non_green, non_green, score_lerp)
-      score_lerp = (float(yp[0][1][0]) - min_start) / start_range
-      yield "<td style=\"background-color: rgb(197,71,255)\">%.2f</td>" % score_lerp
       yield "</tr><tr>"
       for i in range(len(c)):
         score_lerp = (float(yp2[0][0][i]) - min_end) / end_range
         non_red = int((1 - score_lerp)*255)
         yield "<td style=\"background-color: rgb(255,%d,%d)\">%.2f</td>" % (non_red, non_red, score_lerp)
+      yield "<tr><td class=\"inAnswer\">No Answer</td></tr>"
+      score_lerp = (float(yp[0][1][0]) - min_start) / start_range
+      yield "<tr><td style=\"background-color: rgb(197,71,255)\">%.2f</td></tr>" % score_lerp
       score_lerp = (float(yp2[0][1][0]) - min_end) / end_range
-      yield "<td style=\"background-color: rgb(197,71,255)\">%.2f</td>" % score_lerp
+      yield "<tr><td style=\"background-color: rgb(197,71,255)\">%.2f</td></tr>" % score_lerp
       yield "</tr></table>"
     else:
       yield "<table><tr>"
