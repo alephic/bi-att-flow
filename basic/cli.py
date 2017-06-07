@@ -99,6 +99,7 @@ flags.DEFINE_bool("dynamic_att", False, "Dynamic attention [False]")
 
 # Negative prediction
 flags.DEFINE_bool("pred_negative", True, "predict whether question is answerable [True]")
+flags.DEFINE_bool("force_answer", True, "force no negative answers [True]")
 
 def main(_):
     config = flags.FLAGS
