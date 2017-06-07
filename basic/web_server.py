@@ -116,44 +116,59 @@ class QAHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
     end_range = max_end - min_end
     (start, end), score = get_best_span([float(x) for x in yp[0][0][:len(c)]], [float(x) for x in yp2[0][0][:len(c)]])
     no_ans_score = yp[0][1][0] * yp2[0][1][0]
+    rows = []
+    max_row_len = 15
+    answer = []
     if score < no_ans_score:
-      yield "<table><tr>"
+      answer.append("No answer")
       for i, word in enumerate(c):
-        yield "<td class=\"outAnswer\">%s</td>" % word
-      yield "</tr><tr>"
-      for i in range(len(c)):
+        if i % max_row_len == 0:
+          curr_top_row, curr_mid_row, curr_bot_row = [], [], []
+          rows.append(curr_top_row)
+          rows.append(curr_mid_row)
+          rows.append(curr_bot_row)
+        curr_top_row.append("<td class=\"outAnswer\">%s</td>" % word)
         score_lerp = (float(yp[0][0][i]) - min_start) / start_range
         non_green = int((1 - score_lerp)*255)
-        yield "<td style=\"background-color: rgb(%d,255,%d)\">%.2f</td>" % (non_green, non_green, score_lerp)
-      yield "</tr><tr>"
-      for i in range(len(c)):
+        curr_mid_row.append("<td style=\"background-color: rgb(%d,255,%d)\">%.2f</td>" % (non_green, non_green, score_lerp))
+
         score_lerp = (float(yp2[0][0][i]) - min_end) / end_range
         non_red = int((1 - score_lerp)*255)
-        yield "<td style=\"background-color: rgb(255,%d,%d)\">%.2f</td>" % (non_red, non_red, score_lerp)
-      yield "<tr><td class=\"inAnswer\">No Answer</td></tr>"
+        curr_bot_row.append("<td style=\"background-color: rgb(255,%d,%d)\">%.2f</td>" % (non_red, non_red, score_lerp))
+      rows.append(["<td class=\"inAnswer\">No Answer</td>"])
       score_lerp = (float(yp[0][1][0]) - min_start) / start_range
-      yield "<tr><td style=\"background-color: rgb(197,71,255)\">%.2f</td></tr>" % score_lerp
+      rows.append(["<td style=\"background-color: rgb(197,71,255)\">%.2f</td>" % score_lerp])
       score_lerp = (float(yp2[0][1][0]) - min_end) / end_range
-      yield "<tr><td style=\"background-color: rgb(197,71,255)\">%.2f</td></tr>" % score_lerp
-      yield "</tr></table>"
+      rows.append(["<td style=\"background-color: rgb(197,71,255)\">%.2f</td>" % score_lerp])
     else:
-      yield "<table><tr>"
       for i, word in enumerate(c):
+        if i % max_row_len == 0:
+          curr_top_row, curr_mid_row, curr_bot_row = [], [], []
+          rows.append(curr_top_row)
+          rows.append(curr_mid_row)
+          rows.append(curr_bot_row)
         if i >= start and i <= end:
-          yield "<td class=\"inAnswer\">%s</td>" % word
+          answer.append(word)
+          curr_top_row.append("<td class=\"inAnswer\">%s</td>" % word)
         else:
-          yield "<td class=\"outAnswer\">%s</td>" % word
-      yield "</tr><tr>"
-      for i in range(len(c)):
+          curr_top_row.append("<td class=\"outAnswer\">%s</td>" % word)
         score_lerp = (float(yp[0][0][i]) - min_start) / start_range
         non_green = int((1 - score_lerp)*255)
-        yield "<td style=\"background-color: rgb(%d,255,%d)\">%.2f</td>" % (non_green, non_green, score_lerp)
-      yield "</tr><tr>"
-      for i in range(len(c)):
+        curr_mid_row.append("<td style=\"background-color: rgb(%d,255,%d)\">%.2f</td>" % (non_green, non_green, score_lerp))
         score_lerp = (float(yp2[0][0][i]) - min_end) / end_range
         non_red = int((1 - score_lerp)*255)
-        yield "<td style=\"background-color: rgb(255,%d,%d)\">%.2f</td>" % (non_red, non_red, score_lerp)
-      yield "</tr></table>"
+        curr_bot_row.append("<td style=\"background-color: rgb(255,%d,%d)\">%.2f</td>" % (non_red, non_red, score_lerp))
+    print("Responding with answer: %s" % ' '.join(answer))
+    for i in range(len(rows)//3):
+      three = rows[i*3:(i+1)*3]
+      if len(three[0]) > 0:
+        yield "<table>"
+        for row in three:
+          yield "<tr>"
+          for cell in row:
+            yield cell
+          yield "</tr>"
+        yield "</table>"
 
   def do_GET(self):
     if self.path.startswith('/ask?'):
