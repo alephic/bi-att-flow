@@ -93,8 +93,8 @@ class QAHttpRequestHandler(http.server.SimpleHTTPRequestHandler):
     min_start = min(float(yp[0][1][0]), min([float(x) for x in yp[0][0]]))
     max_start = max(float(yp[0][1][0]), max([float(x) for x in yp[0][0]]))
     start_range = max_start - min_start
-    min_start = min(float(yp2[0][1][0]), min([float(x) for x in yp2[0][0]]))
-    max_start = max(float(yp2[0][1][0]), max([float(x) for x in yp2[0][0]]))
+    min_end = min(float(yp2[0][1][0]), min([float(x) for x in yp2[0][0]]))
+    max_end = max(float(yp2[0][1][0]), max([float(x) for x in yp2[0][0]]))
     end_range = max_end - min_end
     _, (start, end) = get_best_span(yp[0], yp2[0])
     if start[0] == 1:
