@@ -285,6 +285,13 @@ def main(_):
     set_dirs(config)
 
     CONFIG = config
+    config.max_num_sents = 1
+    config.max_sent_size = 400
+    config.max_ques_size = 64
+    config.batch_size = 1
+    config.max_word_size = 32
+    config.max_para_size = 400
+
     shared_path = os.path.join(config.out_dir, "shared.json")
     with open(shared_path, 'r') as fh:
       SHARED = json.load(fh)
