@@ -17,7 +17,7 @@ import numpy as np
 import os
 import io
 import shutil
-import tqdm
+from tqdm import tqdm
 
 SESS = None
 MODEL = None
